@@ -57,16 +57,20 @@ Flight_Delay_Prediction/
 │   ├── processed/           # Cached clean datasets and feature matrices
 │   └── README.md            # Dataset placement & column schema guide
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb            # Initial data exploration & schema audit
-│   └── 02_exploratory_data_analysis.ipynb   # In-depth EDA, distributions & leak audits
+│   ├── 01_data_exploration.ipynb                    # Initial data exploration & schema audit
+│   ├── 02_exploratory_data_analysis.ipynb           # In-depth EDA, distributions & leak audits
+│   └── 03_preprocessing_feature_engineering.ipynb   # Pre-departure feature pipelines & date split
 ├── src/
 │   ├── __init__.py          # Package initializer
 │   ├── config.py            # Project paths, aliases & leakage guardrails
 │   ├── data_loader.py       # Automated dataset discovery, inspection & loading
+│   ├── preprocessing.py     # Filtering, chronological split, cyclic & prior encoding, Pipeline
 │   └── utils.py             # Time parsing, group delay statistics & figure saving
 ├── results/
 │   ├── figures/             # Saved exploratory & evaluation plots
-│   └── metrics/             # Evaluation logs & metrics
+│   ├── metrics/             # Evaluation logs & metrics
+│   ├── data_dictionary.json # Machine-readable feature provenance dictionary
+│   └── data_dictionary.md   # Markdown feature specifications
 ├── requirements.txt         # Pinned Python package dependencies
 ├── .gitignore               # Ignores large datasets, caches & venv
 └── README.md                # Project documentation
@@ -111,7 +115,7 @@ Start JupyterLab or Jupyter Notebook:
 ```bash
 ./venv/bin/jupyter lab
 ```
-Open `notebooks/01_data_exploration.ipynb` and select kernel `Python (Flight Delay Venv)`.
+Open any notebook in `notebooks/` and select kernel `Python (Flight Delay Venv)`.
 
 ---
 
@@ -122,9 +126,16 @@ Open `notebooks/01_data_exploration.ipynb` and select kernel `Python (Flight Del
 - [x] Anti-leakage guardrail definitions & operational filtering audit
 - [x] Initial exploratory data exploration notebook (`notebooks/01_data_exploration.ipynb`)
 - [x] Comprehensive Step 2 EDA notebook (`notebooks/02_exploratory_data_analysis.ipynb`)
-- [ ] *Pending user data placement*: Provide `flights.csv` in `data/raw/` to generate live visualizations and summary stats
-- [ ] Step 3: Preprocessing & Feature Engineering (Cyclical time encoding, airport frequency, route delay historical priors)
+- [x] Step 3: Preprocessing & Feature Engineering (`src/preprocessing.py`, `notebooks/03_preprocessing_feature_engineering.ipynb`)
+  - [x] Binary target creation ($y = \text{ArrDelay} \ge 15$)
+  - [x] Operational filtering audit (cancelled, diverted, unrecorded)
+  - [x] Chronological train/val/test split (zero date overlap)
+  - [x] Cyclic time encodings (departure hour sin/cos, minute sin/cos, day sin/cos, month sin/cos)
+  - [x] Bayesian historical delay priors (fitted exclusively on training set)
+  - [x] Scikit-learn `ColumnTransformer` & `Pipeline` (fit on train only, handles unknown categories)
+  - [x] Strict anti-leakage assertions & chronological assertions
+  - [x] Data dictionary persisted (`data_dictionary.json`, `data_dictionary.md`)
+- [ ] *Pending user data placement*: Provide `flights.csv` in `data/raw/` to process the live dataset
 - [ ] Step 4: Baseline ML Models: Logistic Regression & Random Forest
 - [ ] Step 5: Gradient Boosting Model: XGBoost Classifier with time-based train/validation split
 - [ ] Step 6: Evaluation & Benchmarking (Precision, Recall, ROC-AUC, PR-AUC, Confusion Matrix)
-# Flight_Delay_Prediction

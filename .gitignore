@@ -1,0 +1,31 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Operating system artifacts
+.DS_Store
+Thumbs.db
+
+# Large dataset files (keep raw CSVs local, not tracked in git)
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
+
+# Keep gitkeep files
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!results/figures/.gitkeep
+!results/metrics/.gitkeep

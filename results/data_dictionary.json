@@ -1,0 +1,122 @@
+{
+  "departure_hour": {
+    "type": "Integer (0-23)",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Hour of scheduled departure extracted from CRSDepTime."
+  },
+  "departure_minute": {
+    "type": "Integer (0-59)",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Minute of scheduled departure."
+  },
+  "dep_hour_sin": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Cyclic sine encoding of scheduled departure hour: sin(2*pi*hour/24)."
+  },
+  "dep_hour_cos": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Cyclic cosine encoding of scheduled departure hour: cos(2*pi*hour/24)."
+  },
+  "dep_minute_of_day_sin": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Cyclic sine encoding of minute-of-day: sin(2*pi*min/1440)."
+  },
+  "dep_minute_of_day_cos": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Cyclic cosine encoding of minute-of-day: cos(2*pi*min/1440)."
+  },
+  "day_of_week": {
+    "type": "Integer (1-7)",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Day of week (1=Monday, 7=Sunday)."
+  },
+  "is_weekend": {
+    "type": "Binary (0 or 1)",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Flag indicating if flight is scheduled on Saturday or Sunday."
+  },
+  "day_of_week_sin": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Cyclic sine encoding of day of week: sin(2*pi*dow/7)."
+  },
+  "day_of_week_cos": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Cyclic cosine encoding of day of week: cos(2*pi*dow/7)."
+  },
+  "month": {
+    "type": "Integer (1-12)",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Scheduled month of flight."
+  },
+  "month_sin": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Cyclic sine encoding of month: sin(2*pi*month/12)."
+  },
+  "month_cos": {
+    "type": "Float [-1, 1]",
+    "available_at_prediction": "Yes (Calendar)",
+    "description": "Cyclic cosine encoding of month: cos(2*pi*month/12)."
+  },
+  "distance": {
+    "type": "Float / Miles",
+    "available_at_prediction": "Yes (Planned)",
+    "description": "Flight distance between origin and destination airports."
+  },
+  "scheduled_elapsed_time": {
+    "type": "Float / Minutes",
+    "available_at_prediction": "Yes (Planned)",
+    "description": "Scheduled planned flight duration from gate to gate."
+  },
+  "airline_delay_prior": {
+    "type": "Float [0, 1]",
+    "available_at_prediction": "Yes (Historical prior from training set only)",
+    "description": "Smoothed historical delay rate of the carrier calculated exclusively on earlier training flights."
+  },
+  "origin_delay_prior": {
+    "type": "Float [0, 1]",
+    "available_at_prediction": "Yes (Historical prior from training set only)",
+    "description": "Smoothed historical delay rate of the origin airport calculated exclusively on earlier training flights."
+  },
+  "destination_delay_prior": {
+    "type": "Float [0, 1]",
+    "available_at_prediction": "Yes (Historical prior from training set only)",
+    "description": "Smoothed historical delay rate of the destination airport calculated exclusively on earlier training flights."
+  },
+  "route_delay_prior": {
+    "type": "Float [0, 1]",
+    "available_at_prediction": "Yes (Historical prior from training set only)",
+    "description": "Smoothed historical delay rate of the route calculated exclusively on earlier training flights."
+  },
+  "airline": {
+    "type": "Categorical String",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Operating airline code (e.g. AA, DL, UA, WN). One-hot encoded."
+  },
+  "origin": {
+    "type": "Categorical String",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Origin airport IATA code (e.g. ORD, ATL, DFW). One-hot encoded."
+  },
+  "destination": {
+    "type": "Categorical String",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Destination airport IATA code (e.g. LAX, JFK, SFO). One-hot encoded."
+  },
+  "route": {
+    "type": "Categorical String",
+    "available_at_prediction": "Yes (Scheduled)",
+    "description": "Route origin_dest string (e.g. ORD_LAX). High cardinality."
+  },
+  "is_delayed_15": {
+    "type": "Binary (0 or 1)",
+    "available_at_prediction": "NO (Target variable)",
+    "description": "Supervised learning target: 1 if flight arrival delay >= 15 min, 0 otherwise."
+  }
+}
