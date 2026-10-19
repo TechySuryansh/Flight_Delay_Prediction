@@ -1,8 +1,28 @@
-# Flight Delay Prediction via Gradient Boosting and Temporal Deep Learning
+# Flight Delay Prediction
 
-## Phase 1: Traditional Machine Learning
+## Phase 1: Traditional Machine Learning (Academic Syllabus)
 
-An academic machine learning project aimed at predicting commercial flight delays prior to departure using historical flight performance data.
+A foundational Machine Learning project aimed at predicting commercial flight delays prior to departure using classical machine learning algorithms, statistical principles, and optimization techniques.
+
+---
+
+## 📚 Machine Learning Syllabus Coverage
+This project strictly covers the following beginner-level topics from the academic curriculum:
+1. **Machine Learning Project Lifecycle** (Problem formulation, EDA, Preprocessing, Modeling, Evaluation)
+2. **Simple and Multiple Linear Regression using OLS**
+3. **Batch Gradient Descent (BGD)**
+4. **Stochastic Gradient Descent (SGD) and Mini-Batch Gradient Descent (MBGD)**
+5. **Regression and Classification Evaluation Metrics** (Confusion Matrix, Precision, Recall, F1, ROC-AUC, PR-AUC)
+6. **Polynomial Regression and Linear Regression Assumptions**
+7. **Bias-Variance Tradeoff**
+8. **Feature Selection**
+9. **Principal Component Analysis (PCA)**
+10. **Regularization** (L1 Lasso, L2 Ridge)
+11. **Time Series & Chronological Analysis** (Zero lookahead leakage)
+12. **Maximum Likelihood Estimation (MLE) and Logistic Regression**
+13. **Gradient Descent for Logistic Regression and Multiclass Classification**
+
+> **Strict Rule:** Only beginner-level concepts from this syllabus are implemented. Advanced methods (XGBoost, Random Forest, Deep Learning, neural networks, embeddings, SHAP, AutoML) are strictly excluded.
 
 ---
 
@@ -41,39 +61,34 @@ In flight delay prediction, data leakage occurs when models use information that
 ---
 
 ## 🛠️ Technology Stack
-- **Language**: Python 3.12+
-- **Data Manipulation**: `pandas`, `numpy`
+- **Language**: Python 3.12
+- **Data Manipulation**: `pandas`, `NumPy`
 - **Visualization**: `matplotlib`, `seaborn`
-- **Machine Learning**: `scikit-learn`, `xgboost`
-- **Interactive Analysis**: `jupyter`, `ipykernel`
+- **Machine Learning**: `scikit-learn`
+- **Interactive Notebooks**: `Jupyter Notebook`
 
 ---
 
 ## 📁 Project Directory Structure
 ```
 Flight_Delay_Prediction/
-├── data/
-│   ├── raw/                 # Place raw CSV files here (e.g., flights.csv)
-│   ├── processed/           # Cached clean datasets and feature matrices
-│   └── README.md            # Dataset placement & column schema guide
+├── data/                    # Place dataset CSV files here (e.g., data/raw/flights.csv)
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb                    # Initial data exploration & schema audit
-│   ├── 02_exploratory_data_analysis.ipynb           # In-depth EDA, distributions & leak audits
-│   └── 03_preprocessing_feature_engineering.ipynb   # Pre-departure feature pipelines & date split
-├── src/
-│   ├── __init__.py          # Package initializer
-│   ├── config.py            # Project paths, aliases & leakage guardrails
-│   ├── data_loader.py       # Automated dataset discovery, inspection & loading
-│   ├── preprocessing.py     # Filtering, chronological split, cyclic & prior encoding, Pipeline
-│   └── utils.py             # Time parsing, group delay statistics & figure saving
+│   ├── 01_data_exploration.ipynb      # Lifecycle, schema discovery, data quality & leakage checks
+│   ├── 02_data_preprocessing.ipynb    # Filtering, chronological split, scaling & encoding
+│   ├── 03_logistic_regression.ipynb   # MLE, Logistic Regression, L1/L2 Regularization
+│   ├── 04_gradient_descent.ipynb      # BGD, SGD, and Mini-Batch GD from first principles
+│   └── 05_model_evaluation.ipynb     # Confusion Matrix, Precision, Recall, F1, ROC/PR curves
+├── src/                     # Reusable modular pipeline code
+│   ├── __init__.py
+│   ├── config.py
+│   ├── data_loader.py
+│   ├── preprocessing.py
+│   └── utils.py
 ├── results/
-│   ├── figures/             # Saved exploratory & evaluation plots
-│   ├── metrics/             # Evaluation logs & metrics
-│   ├── data_dictionary.json # Machine-readable feature provenance dictionary
-│   └── data_dictionary.md   # Markdown feature specifications
-├── requirements.txt         # Pinned Python package dependencies
-├── .gitignore               # Ignores large datasets, caches & venv
-└── README.md                # Project documentation
+│   └── figures/             # Output evaluation plots and figures
+├── README.md                # Project documentation
+└── requirements.txt         # Dependencies
 ```
 
 ---
@@ -119,23 +134,14 @@ Open any notebook in `notebooks/` and select kernel `Python (Flight Delay Venv)`
 
 ---
 
-## 📌 Phase 1 Roadmap
-- [x] Workspace structure setup (`data/`, `notebooks/`, `src/`, `results/`)
-- [x] Environment configuration & `requirements.txt`
-- [x] Column alias mapping & schema detection (`src/config.py`, `src/data_loader.py`)
-- [x] Anti-leakage guardrail definitions & operational filtering audit
-- [x] Initial exploratory data exploration notebook (`notebooks/01_data_exploration.ipynb`)
-- [x] Comprehensive Step 2 EDA notebook (`notebooks/02_exploratory_data_analysis.ipynb`)
-- [x] Step 3: Preprocessing & Feature Engineering (`src/preprocessing.py`, `notebooks/03_preprocessing_feature_engineering.ipynb`)
-  - [x] Binary target creation ($y = \text{ArrDelay} \ge 15$)
-  - [x] Operational filtering audit (cancelled, diverted, unrecorded)
-  - [x] Chronological train/val/test split (zero date overlap)
-  - [x] Cyclic time encodings (departure hour sin/cos, minute sin/cos, day sin/cos, month sin/cos)
-  - [x] Bayesian historical delay priors (fitted exclusively on training set)
-  - [x] Scikit-learn `ColumnTransformer` & `Pipeline` (fit on train only, handles unknown categories)
-  - [x] Strict anti-leakage assertions & chronological assertions
-  - [x] Data dictionary persisted (`data_dictionary.json`, `data_dictionary.md`)
-- [ ] *Pending user data placement*: Provide `flights.csv` in `data/raw/` to process the live dataset
-- [ ] Step 4: Baseline ML Models: Logistic Regression & Random Forest
-- [ ] Step 5: Gradient Boosting Model: XGBoost Classifier with time-based train/validation split
-- [ ] Step 6: Evaluation & Benchmarking (Precision, Recall, ROC-AUC, PR-AUC, Confusion Matrix)
+## 📌 Phase 1 Academic Roadmap
+- [x] Workspace structure setup (`data/`, `notebooks/`, `src/`, `results/figures/`, `requirements.txt`)
+- [x] Traditional ML dependency configuration (`pandas`, `NumPy`, `scikit-learn`, `matplotlib`, `seaborn`)
+- [x] Anti-leakage guardrail definitions & canonical schema alias mapping
+- [x] `notebooks/01_data_exploration.ipynb` (Project Lifecycle, schema inspection, data quality, anti-leakage audit)
+- [x] `notebooks/02_data_preprocessing.ipynb` (Operational filtering, chronological splitting, scaling & encoding)
+- [x] `notebooks/03_logistic_regression.ipynb` (MLE foundation, Binary cross-entropy, L1/L2 Regularization, Bias-Variance)
+- [x] `notebooks/04_gradient_descent.ipynb` (First-principles Batch, Stochastic, and Mini-Batch Gradient Descent)
+- [x] `notebooks/05_model_evaluation.ipynb` (Confusion Matrix, Precision, Recall, F1, ROC-AUC, PR-AUC, Decision Thresholds)
+- [ ] *Pending user data placement*: Place `flights.csv` into `data/raw/` (or `data/`)
+- [ ] *Pending user approval*: Fit models, train gradient descent algorithms, and benchmark evaluation metrics
