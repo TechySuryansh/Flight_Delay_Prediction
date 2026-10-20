@@ -19,10 +19,16 @@ Thumbs.db
 
 # Large dataset files (keep raw CSVs local, not tracked in git)
 data/raw/*.csv
+data/raw/**/*.csv
 data/raw/*.zip
+data/raw/**/*.zip
 data/raw/*.parquet
+data/raw/**/*.parquet
+data/raw/archive/
 data/processed/*.csv
+data/processed/**/*.csv
 data/processed/*.parquet
+data/processed/**/*.parquet
 
 # Keep gitkeep files
 !data/raw/.gitkeep
