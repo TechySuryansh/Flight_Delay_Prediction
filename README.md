@@ -72,76 +72,94 @@ In flight delay prediction, data leakage occurs when models use information that
 ## 📁 Project Directory Structure
 ```
 Flight_Delay_Prediction/
-├── data/                    # Place dataset CSV files here (e.g., data/raw/flights.csv)
+├── app/
+│   └── app.py                         # Streamlit interactive web application frontend
+├── data/
+│   ├── raw/                           # Raw flight archives
+│   └── processed/
+│       ├── flights_cleaned.csv        # Sanitized operational cohort (24,522 rows)
+│       └── flights_features.csv       # Model-ready feature dataset (46 columns)
+├── models/
+│   └── classification_pipeline.joblib # Validated production classification artifact
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb      # Lifecycle, schema discovery, data quality & leakage checks
-│   ├── 02_data_preprocessing.ipynb    # Filtering, chronological split, scaling & encoding
-│   ├── 03_logistic_regression.ipynb   # MLE, Logistic Regression, L1/L2 Regularization
-│   ├── 04_gradient_descent.ipynb      # BGD, SGD, and Mini-Batch GD from first principles
-│   └── 05_model_evaluation.ipynb     # Confusion Matrix, Precision, Recall, F1, ROC/PR curves
-├── src/                     # Reusable modular pipeline code
-│   ├── __init__.py
-│   ├── config.py
-│   ├── data_loader.py
-│   ├── preprocessing.py
-│   └── utils.py
+│   ├── 01_dataset_inspection.ipynb    # Member 1A: Schema discovery, data quality & leakage checks
+│   ├── 02_data_cleaning.ipynb         # Member 1B: Filtering, target formulation, standardized dates
+│   ├── 03a_eda_time_series.ipynb      # Member 2A: Diurnal hourly escalation & seasonality analysis
+│   ├── 03b_feature_engineering.ipynb  # Member 2B: Cyclical encodings, empirical Bayes priors, splits
+│   ├── 04_regression_experiments.ipynb# Member 3: Continuous OLS, GD, polynomial, Lasso/Ridge
+│   ├── 05_classification_models.ipynb # Member 4: Logistic MLE, first-principles GD, thresholding
+│   ├── 06_pca_experiment.ipynb        # Member 5: PCA dimensionality reduction (Syllabus Topic 11)
+│   └── 07_final_model_comparison.ipynb# Member 5: Unified scorecard, frozen test evaluation
+├── reports/                           # Comprehensive technical handoffs and member reports
+│   ├── member1A_data_quality_report.md
+│   ├── member1B_preprocessing_report.md
+│   ├── member2A_eda_report.md
+│   ├── member2B_feature_engineering_report.md
+│   ├── member3_regression_report.md
+│   ├── member4_classification_report.md
+│   └── member5_final_report.md        # Member 5: Final synthesis and system integration report
 ├── results/
-│   └── figures/             # Output evaluation plots and figures
-├── README.md                # Project documentation
-└── requirements.txt         # Dependencies
+│   └── figures/                       # Publication figures (classification, regression, eda, pca, comparison)
+├── src/                               # Modular, reusable production code
+│   ├── classification.py              # Logistic Regression, GD, pipeline builder, evaluation
+│   ├── config.py                      # Canonical schema mappings and directory configurations
+│   ├── data_loader.py                 # Automated dataset discovery and inspection
+│   ├── features.py                    # Pre-departure feature engineering & Bayes priors
+│   ├── preprocessing.py               # Operational cleaning, filtering, chronological splitting
+│   ├── regression_experiments.py      # OLS, gradient descent, regularization
+│   ├── rescheduling_simulator.py      # Member 5: Offline flight departure rescheduling simulator
+│   └── utils.py                       # Helper utilities
+├── README.md                          # Project documentation
+└── requirements.txt                   # Project dependencies (including Streamlit & Plotly)
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started & Launching the Application
 
 ### 1. Environment Setup
-A dedicated virtual environment `venv` is configured in this repository.
-
-Activate it using:
+Create and activate a virtual environment:
 ```bash
-source venv/bin/activate
-```
-
-If setting up on a new machine:
-```bash
-python3.12 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
-python -m ipykernel install --user --name flight-delay-venv --display-name "Python (Flight Delay Venv)"
 ```
 
-### 2. Providing the Dataset
-Place your flight dataset CSV (e.g. Kaggle's 2015 `flights.csv` or US DOT BTS `Combined_Flights_2022.csv`) inside:
-```
-data/raw/
-```
-Refer to `data/README.md` for complete column recommendations.
-
-### 3. Run Automated Dataset Inspection
-Run the automated schema and leakage inspection script:
+### 2. Launch Streamlit Web Application (Member 5 Integration)
+Launch the interactive web application frontend:
 ```bash
-./venv/bin/python src/data_loader.py
+streamlit run app/app.py
+```
+The interface provides five core modules:
+1. **🏠 Home / Overview:** Project objectives, DOT BTS definition, 8-stage ML lifecycle, and disclaimers.
+2. **🛫 Predict Flight Delay:** Input predeparture attributes to receive real-time probability estimates, 3-tier risk gauges (Low/Moderate/High), and operational threshold alerts ($\tau^* = 0.33$).
+3. **📊 Delay Analytics:** Interactive Plotly charts of diurnal hourly escalation, carrier rates, and airport hub delays.
+4. **🔄 Rescheduling Simulator:** Explore hypothetical departure shifts (±120 min) and rank options by estimated delay probability.
+5. **🏆 Model Performance:** Consolidated scorecards, test confusion matrices, ROC/PR curves, and calibration reliability diagrams.
+
+### 3. Run Automated Rescheduling Simulator in Python
+Run the command-line self-test of the offline simulator:
+```bash
+python -m src.rescheduling_simulator
 ```
 
 ### 4. Launch Jupyter Notebooks
-Start JupyterLab or Jupyter Notebook:
+Start Jupyter to inspect the step-by-step educational notebooks:
 ```bash
-./venv/bin/jupyter lab
+jupyter lab
+# Or run individual notebooks:
+# notebooks/06_pca_experiment.ipynb
+# notebooks/07_final_model_comparison.ipynb
 ```
-Open any notebook in `notebooks/` and select kernel `Python (Flight Delay Venv)`.
 
 ---
 
-## 📌 Phase 1 Academic Roadmap
-- [x] Workspace structure setup (`data/`, `notebooks/`, `src/`, `results/figures/`, `requirements.txt`)
-- [x] Traditional ML dependency configuration (`pandas`, `NumPy`, `scikit-learn`, `matplotlib`, `seaborn`)
-- [x] Anti-leakage guardrail definitions & canonical schema alias mapping
-- [x] `notebooks/01_data_exploration.ipynb` (Project Lifecycle, schema inspection, data quality, anti-leakage audit)
-- [x] `notebooks/02_data_preprocessing.ipynb` (Operational filtering, chronological splitting, scaling & encoding)
-- [x] `notebooks/03_logistic_regression.ipynb` (MLE foundation, Binary cross-entropy, L1/L2 Regularization, Bias-Variance)
-- [x] `notebooks/04_gradient_descent.ipynb` (First-principles Batch, Stochastic, and Mini-Batch Gradient Descent)
-- [x] `notebooks/05_model_evaluation.ipynb` (Confusion Matrix, Precision, Recall, F1, ROC-AUC, PR-AUC, Decision Thresholds)
-- [ ] *Pending user data placement*: Place `flights.csv` into `data/raw/` (or `data/`)
-- [ ] *Pending user approval*: Fit models, train gradient descent algorithms, and benchmark evaluation metrics
+## 📌 Phase 1 Academic Roadmap & Status
+- [x] **Task 1A (Member 1A):** Dataset inspection, data quality audit, and ML lifecycle definition (`reports/member1A_data_quality_report.md`).
+- [x] **Task 1B (Member 1B):** Operational cleaning, cancellation/diversion filtering, binary target creation, and dataset export (`reports/member1B_preprocessing_report.md`).
+- [x] **Task 2A (Member 2A):** Exploratory data analysis, diurnal delay escalation, and descriptive time-series analysis (`reports/member2A_eda_report.md`).
+- [x] **Task 2B (Member 2B):** Pre-departure feature engineering, empirical Bayes priors, and chronological partitioning (`reports/member2B_feature_engineering_report.md`).
+- [x] **Task 3 (Member 3):** Continuous delay regression, OLS, GD, polynomial expansions, Gauss-Markov diagnostics, Ridge/Lasso regularization (`reports/member3_regression_report.md`).
+- [x] **Task 4 (Member 4):** Binary classification, Logistic Regression via MLE, first-principles BCE GD, asymmetric cost threshold tuning ($\tau^*=0.33$), probability calibration, and pipeline artifact export (`reports/member4_classification_report.md`).
+- [x] **Task 5 (Member 5):** PCA experiment (Syllabus Topic 11), unified test set evaluation, offline rescheduling simulation, Streamlit web frontend, and final Phase 1 synthesis (`reports/member5_final_report.md`).
