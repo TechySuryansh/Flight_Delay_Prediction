@@ -1,6 +1,6 @@
 # Member 1A: Comprehensive Data Quality and Dataset Inspection Report
 **Project 21:** Flight Delay Prediction and Rescheduling  
-**Team Role:** Member 1A (Data Inspection & Quality Analysis)  
+**Author:** Sarvjeet Yadav (Member 1A: Data Inspection & Quality Analysis) <sarvjeetyadav2969@gmail.com>  
 **Phase:** AML Phase 1 — Machine Learning (Academic Syllabus)  
 **Date:** October 20, 2026  
 **Status:** Completed and Verified  

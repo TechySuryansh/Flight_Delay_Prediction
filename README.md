@@ -163,3 +163,15 @@ jupyter lab
 - [x] **Task 3 (Member 3):** Continuous delay regression, OLS, GD, polynomial expansions, Gauss-Markov diagnostics, Ridge/Lasso regularization (`reports/member3_regression_report.md`).
 - [x] **Task 4 (Member 4):** Binary classification, Logistic Regression via MLE, first-principles BCE GD, asymmetric cost threshold tuning ($\tau^*=0.33$), probability calibration, and pipeline artifact export (`reports/member4_classification_report.md`).
 - [x] **Task 5 (Member 5):** PCA experiment (Syllabus Topic 11), unified test set evaluation, offline rescheduling simulation, Streamlit web frontend, and final Phase 1 synthesis (`reports/member5_final_report.md`).
+
+---
+
+## 👥 Team & Contributors
+
+| Member | Role | Key Contributions |
+| :--- | :--- | :--- |
+| **Sarvjeet Yadav** | Member 1A | Dataset discovery, schema validation, data quality audit, anti-leakage audit, initial pipeline handoff |
+| **Ajeesh** | Member 1B | Operational data cleaning, cancellation filtering, binary target formulation |
+| **Akshat Chauhan** | Member 2A | Exploratory data analysis, diurnal delay escalation, descriptive time-series |
+| **Pranjal Modi** | Member 2B | Pre-departure feature engineering, empirical Bayes priors, chronological splits |
+| **TechySuryansh** | Member 3 / 4 / 5 | Regression experiments, classification pipelines, offline simulator, and Streamlit app integration |

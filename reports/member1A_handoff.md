@@ -1,6 +1,6 @@
 # Member 1A to Member 1B Handoff Report
 **Project:** Flight Delay Prediction and Rescheduling (Phase 1: Machine Learning)  
-**Author:** Member 1A (Data Inspection & Quality Analysis)  
+**Author:** Sarvjeet Yadav — Member 1A (Data Inspection & Quality Analysis) <sarvjeetyadav2969@gmail.com>  
 **Recipient:** Member 1B (Data Cleaning & Preprocessing)  
 **Date:** October 20, 2026  
 **Status:** Task 1A Complete — Ready for Task 1B  
