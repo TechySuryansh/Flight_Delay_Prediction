@@ -14,11 +14,11 @@
 
 | # | Team Member | Roll No. / Student ID | Assigned Module | Key Technical Deliverables |
 | :-: | :--- | :---: | :--- | :--- |
-| **1** | **Sarvjeet Yadav** | `2401010424` | **Task 1: Data Audit, Quality Quarantine & Preprocessing** | • Raw schema inspection of 5.8M BTS records<br>• 100% missing value resolution via non-arrival quarantine<br>• Formulation of binary target ($y = \mathbb{I}(\text{ArrDelay} \ge 15)$)<br>• Data pipelines (`notebooks/01`, `02` & `src/preprocessing.py`) |
-| **2** | **Pranjal Modi** | `2401010334` | **Task 2: EDA, Time-Series & Feature Engineering** | • Diurnal hourly delay escalation analysis ($26\% \rightarrow 52\%$ evening surge)<br>• Strict chronological data partitioning (Train / Val / Frozen Test)<br>• Trigonometric cyclical encodings ($\sin/\cos$) for 4 temporal horizons<br>• Out-Of-Fold Empirical Bayes smoothed target priors ($m=10$) |
-| **3** | **Suryansh Singh** | `2401010467` | **Task 3: Continuous Delay Regression Experiments** | • Simple and Multiple Ordinary Least Squares (OLS) closed-form<br>• First-principles Batch GD, Mini-Batch GD ($B=64$), and SGD ($B=1$)<br>• Gauss-Markov diagnostic audit (Durbin-Watson $= 2.0081$)<br>• Bias-Variance polynomial complexity & Lasso/Ridge regularization |
-| **4** | **Akshat Chauhan** | `2401010055` | **Task 4: Binary Classification & Operational Calibration** | • Logistic Regression via Maximum Likelihood Estimation (MLE)<br>• First-principles Binary Cross-Entropy GD optimizer<br>• Cost-sensitive asymmetric threshold calibration ($\tau^* = 0.33$)<br>• Probability calibration (Brier Score $= 0.2241$) & pipeline serialization |
-| **5** | **Ajeesh Amreet** | `2401010048` | **Task 5: Dimensionality Reduction & Rescheduling Simulation** | • Unsupervised PCA compression (15 components capture $96.72\%$ variance)<br>• Unified cross-partition model benchmark scorecard<br>• Discrete-slot departure rescheduling simulation engine ($\Delta t \in \pm 120$ min)<br>• Comprehensive Phase 1 synthesis and evaluation pipeline (`notebooks/06`, `07`) |
+| **1** | **Sarvjeet Yadav** | `2401010424` | **Task 1: Data Audit, Quality Quarantine & Preprocessing** | • Raw schema inspection of 5.8M BTS records<br>• 100% missing value resolution via non-arrival quarantine<br>• Formulation of binary target ($y = \mathbb{I}(\text{ArrDelay} \ge 15)$)<br>• Data pipeline (`notebooks/01_data_audit_and_cleaning.ipynb`) |
+| **2** | **Pranjal Modi** | `2401010334` | **Task 2: EDA, Time-Series & Feature Engineering** | • Diurnal hourly delay escalation analysis ($26\% \rightarrow 52\%$ evening surge)<br>• Strict chronological data partitioning (Train / Val / Frozen Test)<br>• Trigonometric cyclical encodings ($\sin/\cos$) for 4 temporal horizons<br>• Feature engineering pipeline (`notebooks/02_eda_and_feature_engineering.ipynb`) |
+| **3** | **Suryansh Singh** | `2401010467` | **Task 3: Continuous Delay Regression Experiments** | • Simple and Multiple Ordinary Least Squares (OLS) closed-form<br>• First-principles Batch GD, Mini-Batch GD ($B=64$), and SGD ($B=1$)<br>• Gauss-Markov diagnostic audit (Durbin-Watson $= 2.0081$)<br>• Regression pipeline (`notebooks/03_regression_experiments.ipynb`) |
+| **4** | **Akshat Chauhan** | `2401010055` | **Task 4: Binary Classification & Operational Calibration** | • Logistic Regression via Maximum Likelihood Estimation (MLE)<br>• First-principles Binary Cross-Entropy GD optimizer<br>• Cost-sensitive asymmetric threshold calibration ($\tau^* = 0.33$)<br>• Classification pipeline (`notebooks/04_classification_models.ipynb`) |
+| **5** | **Ajeesh Amreet** | `2401010048` | **Task 5: Dimensionality Reduction & Rescheduling Simulation** | • Unsupervised PCA compression (15 components capture $96.72\%$ variance)<br>• Unified cross-partition model benchmark scorecard<br>• Discrete-slot departure rescheduling simulation engine ($\Delta t \in \pm 120$ min)<br>• Evaluation pipeline (`notebooks/05_pca_and_model_evaluation.ipynb`) |
 
 ---
 
@@ -122,14 +122,11 @@ Flight_Delay_Prediction/
 ├── models/
 │   └── classification_pipeline.joblib # Validated production classification model
 ├── notebooks/
-│   ├── 01_dataset_inspection.ipynb    # Task 1: Schema audit, quality & leakage checks
-│   ├── 02_data_cleaning.ipynb         # Task 1: Non-arrival quarantine & target formulation
-│   ├── 03a_eda_time_series.ipynb      # Task 2: Diurnal escalation & time-series analysis
-│   ├── 03b_feature_engineering.ipynb  # Task 2: Cyclical transforms, Bayes priors & splitting
-│   ├── 04_regression_experiments.ipynb# Task 3: OLS, GD from scratch, polynomials, Lasso/Ridge
-│   ├── 05_classification_models.ipynb # Task 4: Logistic MLE, calibration & threshold tuning
-│   ├── 06_pca_experiment.ipynb        # Task 5: PCA eigendecomposition & dimensionality reduction
-│   └── 07_final_model_comparison.ipynb# Task 5: Unified scorecard & frozen test set audit
+│   ├── 01_data_audit_and_cleaning.ipynb      # Task 1 (Sarvjeet): Schema audit, quality quarantine & cleaning
+│   ├── 02_eda_and_feature_engineering.ipynb  # Task 2 (Pranjal): Diurnal EDA, cyclical transforms & Bayes priors
+│   ├── 03_regression_experiments.ipynb       # Task 3 (Suryansh): OLS, GD from scratch, polynomials, Lasso/Ridge
+│   ├── 04_classification_models.ipynb        # Task 4 (Akshat): Logistic MLE, calibration & threshold tuning
+│   └── 05_pca_and_model_evaluation.ipynb     # Task 5 (Ajeesh): PCA eigendecomposition & unified benchmark audit
 ├── reports/                           # Member handoffs & academic project report
 │   ├── member1A_data_quality_report.md
 │   ├── member1B_preprocessing_report.md
