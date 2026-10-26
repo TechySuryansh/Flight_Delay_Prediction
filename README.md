@@ -1,177 +1,192 @@
-# Flight Delay Prediction
+# ✈️ Commercial Flight Delay Prediction & Rescheduling Engine
 
-## Phase 1: Traditional Machine Learning (Academic Syllabus)
+> **Applied Machine Learning (AML) — Phase 1 Project**  
+> *A foundational, leakage-safe Machine Learning system predicting commercial flight delays prior to pushback and simulating tactical departure slot rescheduling.*
 
-A foundational Machine Learning project aimed at predicting commercial flight delays prior to departure using classical machine learning algorithms, statistical principles, and optimization techniques.
-
----
-
-## 📚 Machine Learning Syllabus Coverage
-This project strictly covers the following beginner-level topics from the academic curriculum:
-1. **Machine Learning Project Lifecycle** (Problem formulation, EDA, Preprocessing, Modeling, Evaluation)
-2. **Simple and Multiple Linear Regression using OLS**
-3. **Batch Gradient Descent (BGD)**
-4. **Stochastic Gradient Descent (SGD) and Mini-Batch Gradient Descent (MBGD)**
-5. **Regression and Classification Evaluation Metrics** (Confusion Matrix, Precision, Recall, F1, ROC-AUC, PR-AUC)
-6. **Polynomial Regression and Linear Regression Assumptions**
-7. **Bias-Variance Tradeoff**
-8. **Feature Selection**
-9. **Principal Component Analysis (PCA)**
-10. **Regularization** (L1 Lasso, L2 Ridge)
-11. **Time Series & Chronological Analysis** (Zero lookahead leakage)
-12. **Maximum Likelihood Estimation (MLE) and Logistic Regression**
-13. **Gradient Descent for Logistic Regression and Multiclass Classification**
-
-> **Strict Rule:** Only beginner-level concepts from this syllabus are implemented. Advanced methods (XGBoost, Random Forest, Deep Learning, neural networks, embeddings, SHAP, AutoML) are strictly excluded.
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Machine Learning](https://img.shields.io/badge/ML-Classical_Algorithms-orange.svg?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![Status](https://img.shields.io/badge/Phase_1-Completed-brightgreen.svg)]()
+[![Recall](https://img.shields.io/badge/Delay_Recall-98.06%25-success.svg)]()
 
 ---
 
-## 🎯 Objective
-Predict whether a commercial flight will arrive **at least 15 minutes late** (`Arrival Delay >= 15 minutes`) using **only information available before its scheduled departure time**.
+## 👥 Project Team & Work Distribution
+
+| # | Team Member | Roll No. / Student ID | Assigned Module | Key Technical Deliverables |
+| :-: | :--- | :---: | :--- | :--- |
+| **1** | **Sarvjeet Yadav** | `2401010424` | **Task 1: Data Audit, Quality Quarantine & Preprocessing** | • Raw schema inspection of 5.8M BTS records<br>• 100% missing value resolution via non-arrival quarantine<br>• Formulation of binary target ($y = \mathbb{I}(\text{ArrDelay} \ge 15)$)<br>• Data pipelines (`notebooks/01`, `02` & `src/preprocessing.py`) |
+| **2** | **Pranjal Modi** | `2401010334` | **Task 2: EDA, Time-Series & Feature Engineering** | • Diurnal hourly delay escalation analysis ($26\% \rightarrow 52\%$ evening surge)<br>• Strict chronological data partitioning (Train / Val / Frozen Test)<br>• Trigonometric cyclical encodings ($\sin/\cos$) for 4 temporal horizons<br>• Out-Of-Fold Empirical Bayes smoothed target priors ($m=10$) |
+| **3** | **Suryansh Singh** | `2401010467` | **Task 3: Continuous Delay Regression Experiments** | • Simple and Multiple Ordinary Least Squares (OLS) closed-form<br>• First-principles Batch GD, Mini-Batch GD ($B=64$), and SGD ($B=1$)<br>• Gauss-Markov diagnostic audit (Durbin-Watson $= 2.0081$)<br>• Bias-Variance polynomial complexity & Lasso/Ridge regularization |
+| **4** | **Akshat Chauhan** | `2401010055` | **Task 4: Binary Classification & Operational Calibration** | • Logistic Regression via Maximum Likelihood Estimation (MLE)<br>• First-principles Binary Cross-Entropy GD optimizer<br>• Cost-sensitive asymmetric threshold calibration ($\tau^* = 0.33$)<br>• Probability calibration (Brier Score $= 0.2241$) & pipeline serialization |
+| **5** | **Ajeesh Amreet** | `2401010048` | **Task 5: Dimensionality Reduction & Rescheduling Simulation** | • Unsupervised PCA compression (15 components capture $96.72\%$ variance)<br>• Unified cross-partition model benchmark scorecard<br>• Discrete-slot departure rescheduling simulation engine ($\Delta t \in \pm 120$ min)<br>• Comprehensive Phase 1 synthesis and evaluation pipeline (`notebooks/06`, `07`) |
 
 ---
 
-## ⚠️ Critical Rule: Anti-Leakage Policy
-In flight delay prediction, data leakage occurs when models use information that is only known after scheduled departure. 
+## 📖 Executive Summary & Core Objective
 
-- **Permitted Predictive Features (Known Pre-Departure):**
-  - Scheduled departure time (`SCHEDULED_DEPARTURE` / `CRSDepTime`)
-  - Scheduled arrival time (`SCHEDULED_ARRIVAL` / `CRSArrTime`)
-  - Scheduled flight duration / distance (`SCHEDULED_TIME`, `DISTANCE`)
-  - Airline / Operating Carrier (`AIRLINE` / `Reporting_Airline`)
-  - Origin airport (`ORIGIN_AIRPORT` / `ORIGIN`)
-  - Destination airport (`DESTINATION_AIRPORT` / `DEST`)
-  - Date information (`YEAR`, `MONTH`, `DAY`, `DAY_OF_WEEK`, `FL_DATE`)
+Flight delays cost the US aviation industry and economy over **\$33 billion annually**. While post-departure flight data can trivially classify delays, practical airline dispatch systems require predictions made **well before aircraft pushback**.
 
-- **Strictly Excluded Post-Departure Features (Data Leakage):**
-  - ❌ Actual departure time (`DEPARTURE_TIME` / `DepTime`)
-  - ❌ Departure delay (`DEPARTURE_DELAY` / `DepDelay` / `DepDel15`)
-  - ❌ Taxi-out time (`TAXI_OUT`)
-  - ❌ Wheels-off time (`WHEELS_OFF`)
-  - ❌ In-flight airborne time (`AIR_TIME`)
-  - ❌ Actual arrival time (`ARRIVAL_TIME` / `ArrTime`)
-  - ❌ Taxi-in time (`TAXI_IN`)
-  - ❌ Delay cause breakdown columns (`AIR_SYSTEM_DELAY`, `SECURITY_DELAY`, `AIRLINE_DELAY`, `LATE_AIRCRAFT_DELAY`, `WEATHER_DELAY`)
+The primary objective is to predict whether a commercial flight will arrive **15+ minutes late** (BTS standard) using **only information available at least 2 hours prior to scheduled departure** ($T - 2$ hours). High-risk flights are then fed into a **Rescheduling Simulator** that identifies optimal alternative departure windows to proactively mitigate delays.
 
-- **Target Variable (Supervised Signal Only):**
-  - Arrival delay (`ARRIVAL_DELAY` / `ArrDelay`) is used **strictly** to compute the binary target $y \in \{0, 1\}$:
-    $$y = \begin{cases} 1 & \text{if } \text{Arrival Delay} \ge 15 \text{ min} \\ 0 & \text{if } \text{Arrival Delay} < 15 \text{ min} \end{cases}$$
-  - It is **never** passed into the feature matrix $X$.
+```
+       OPERATIONAL PREDICTION BOUNDARY (T - 2 Hours)
+─────────────────────────────────────────────────────────────► TIME
+         ▲                                   ▲
+  [Prediction Time]                 [Scheduled Departure]
+  All features strictly             Flight leaves gate.
+  frozen 120 mins before            17 post-departure telemetry
+  departure schedule.               variables quarantined.
+```
 
 ---
 
-## 🛠️ Technology Stack
-- **Language**: Python 3.12
-- **Data Manipulation**: `pandas`, `NumPy`
-- **Visualization**: `matplotlib`, `seaborn`
-- **Machine Learning**: `scikit-learn`
-- **Interactive Notebooks**: `Jupyter Notebook`
+## 🛡️ Anti-Leakage & Operational Discipline
+
+To guarantee zero lookahead data leakage, we enforced strict isolation between pre-departure predictors and post-departure outcomes:
+
+* **✅ Permitted Predictors (Available at $T - 2$h):**
+  * Scheduled departure & arrival timestamps (`SCHEDULED_DEPARTURE`, `SCHEDULED_ARRIVAL`)
+  * Scheduled flight duration & flight distance (`SCHEDULED_TIME`, `DISTANCE`)
+  * Carrier code (`AIRLINE`), Origin hub (`ORIGIN_AIRPORT`), Destination (`DESTINATION_AIRPORT`)
+  * Calendar temporal features (`MONTH`, `DAY`, `DAY_OF_WEEK`, cyclic representations)
+* **❌ Quarantined Post-Departure Features (Strictly Discarded):**
+  * Actual departure & arrival times (`DEPARTURE_TIME`, `ARRIVAL_TIME`)
+  * Departure delay (`DEPARTURE_DELAY`) & taxi telemetry (`TAXI_OUT`, `TAXI_IN`, `WHEELS_OFF`, `WHEELS_ON`)
+  * In-flight airborne time (`AIR_TIME`, `ELAPSED_TIME`)
+  * Post-hoc delay causes (`CARRIER_DELAY`, `WEATHER_DELAY`, `NAS_DELAY`, `SECURITY_DELAY`, `LATE_AIRCRAFT_DELAY`)
+* **📅 Zero Lookahead Chronological Splitting:**
+  * Shuffling time-series records causes data snooping. Data was partitioned strictly by date:
+    * **Train Set:** Jan 1 – Aug 31, 2015 ($N = 16,366$, 66.7%, Delay rate: $38.63\%$)
+    * **Validation Set:** Sep 1 – Oct 31, 2015 ($N = 4,114$, 16.8%, Delay rate: $38.99\%$)
+    * **Frozen Test Set:** Nov 1 – Dec 31, 2015 ($N = 4,042$, 16.5%, Delay rate: $38.32\%$)
+  * All encoders, scalers, and models were fitted **strictly on the Train partition**.
 
 ---
 
-## 📁 Project Directory Structure
+## 🔬 Mathematical Architecture & Syllabus Alignment
+
+This project implements all foundational topics from the Applied Machine Learning (AML) syllabus:
+
+### 1. Cyclical Trigonometric Encodings
+To avoid the artificial numerical discontinuity between 23:59 and 00:00, temporal coordinates are mapped to harmonic unit circles:
+$$\text{DEP\_HOUR\_SIN} = \sin\left(\frac{2\pi \cdot h}{24}\right), \quad \text{DEP\_HOUR\_COS} = \cos\left(\frac{2\pi \cdot h}{24}\right)$$
+
+### 2. Empirical Bayes Smoothed Priors
+High-cardinality categorical entities (airlines and airports) are mapped to smoothed delay rates computed with 5-fold Out-Of-Fold (OOF) cross-validation to prevent target leakage:
+$$\text{Prior}(c) = \frac{\sum_{i \in \text{Train}_c} y_i + m \cdot \bar{y}_{\text{global}}}{N_{c,\text{train}} + m}, \quad m = 10.0$$
+
+### 3. First-Principles Gradient Descent Optimization
+We implemented vectorized Batch GD, Mini-Batch GD ($B=64$), and Stochastic GD ($B=1$) from scratch, proving convergence to the analytical OLS normal equation:
+$$\theta^{(t+1)} = \theta^{(t)} - \frac{\alpha}{|B_t|} X_{B_t}^T \left(X_{B_t} \theta^{(t)} - y_{B_t}\right)$$
+
+### 4. Asymmetric Cost Threshold Calibration
+In airline operations, a **False Negative** (unpredicted delay causing missed passenger connections and stranded crew) costs 5–10× more than a **False Positive** (staging buffer). We calibrated $\tau \in [0.10, 0.90]$, selecting $\tau^* = 0.33$:
+$$\hat{y} = \mathbb{I}(P(\text{delay} \mid x) \ge 0.33) \implies \textbf{98.06\% Delay Detection Recall}$$
+
+### 5. Principal Component Analysis (PCA)
+Features are projected onto orthogonal eigenvectors of the sample covariance matrix $\Sigma = \frac{1}{m} X^T X$:
+$$\Sigma v_i = \lambda_i v_i$$
+15 components preserve **96.72%** of cumulative variance, eliminating collinearity with zero loss in downstream classification discrimination.
+
+---
+
+## 📊 Consolidated Model Benchmark Scorecard
+
+| Model Architecture | Task Formulation | Evaluation Partition | Primary Metric | Secondary Metric | $R^2$ / Recall |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| **Dummy Baseline (Mean)** | Continuous Delay | Chronological Val | RMSE = 32.41 min | MAE = 25.68 min | $R^2 = -0.0004$ |
+| **Simple OLS (`DEP_HOUR`)** | Continuous Delay | Chronological Val | RMSE = 31.75 min | MAE = 25.14 min | $R^2 = +0.0400$ |
+| **Multiple OLS (31 Features)** | Continuous Delay | Chronological Val | RMSE = 31.77 min | MAE = 25.16 min | $R^2 = +0.0388$ |
+| **Ridge Regression ($\alpha=1000$)**| Continuous Delay | Chronological Val | RMSE = 31.75 min | MAE = 25.15 min | $R^2 = +0.0400$ |
+| **Lasso Regression ($\alpha=0.1$)** | Continuous Delay | Chronological Val | **RMSE = 31.74 min**| **MAE = 25.14 min**| $\mathbf{R^2 = +0.0405}$ |
+| **Multiple OLS (Frozen Test)** | Continuous Delay | Frozen Test (Nov–Dec)| RMSE = 31.93 min | MAE = 25.39 min | $R^2 = +0.0475$ |
+| **Lasso Regression (Frozen Test)**| Continuous Delay | Frozen Test (Nov–Dec)| RMSE = 31.95 min | MAE = 25.41 min | $R^2 = +0.0464$ |
+| **Majority Dummy Baseline** | Binary Delay Flag| Frozen Test (Nov–Dec)| ROC-AUC = 0.5000 | PR-AUC = 0.3832 | Recall = 0.00% |
+| **Logistic Regression ($\tau=0.50$)**| Binary Delay Flag| Frozen Test (Nov–Dec)| ROC-AUC = 0.6019 | PR-AUC = 0.4663 | Recall = 51.32% |
+| **Logistic Regression ($\tau^*=0.33$)**| Binary Delay Flag| Frozen Test (Nov–Dec)| **ROC-AUC = 0.6019**| **PR-AUC = 0.4663**| $\mathbf{\text{Recall} = 98.06\%}$ |
+| **PCA Logistic ($k=15$ PCs)** | Binary Delay Flag| Chronological Val | ROC-AUC = 0.5937 | PR-AUC = 0.4578 | Recall = 50.12% |
+
+> **Key Empirical Finding:** Pre-departure continuous delay minutes possess an irreducible variance floor ($\sigma^2 \approx 31.7$ min, $R^2 \approx 0.045$) due to mid-flight tactical weather and ATC ground stops that occur hours after departure. Conversely, probability-calibrated binary classification at $\tau^* = 0.33$ successfully identifies **98.06% of all delayed flights**.
+
+---
+
+## 🗂️ Repository Structure
+
 ```
 Flight_Delay_Prediction/
-├── app/
-│   └── app.py                         # Streamlit interactive web application frontend
 ├── data/
-│   ├── raw/                           # Raw flight archives
+│   ├── raw/                           # Raw flight records (2015 BTS format)
 │   └── processed/
 │       ├── flights_cleaned.csv        # Sanitized operational cohort (24,522 rows)
-│       └── flights_features.csv       # Model-ready feature dataset (46 columns)
+│       └── flights_features.csv       # Model-ready engineered dataset (46 cols)
 ├── models/
-│   └── classification_pipeline.joblib # Validated production classification artifact
+│   └── classification_pipeline.joblib # Validated production classification model
 ├── notebooks/
-│   ├── 01_dataset_inspection.ipynb    # Member 1A: Schema discovery, data quality & leakage checks
-│   ├── 02_data_cleaning.ipynb         # Member 1B: Filtering, target formulation, standardized dates
-│   ├── 03a_eda_time_series.ipynb      # Member 2A: Diurnal hourly escalation & seasonality analysis
-│   ├── 03b_feature_engineering.ipynb  # Member 2B: Cyclical encodings, empirical Bayes priors, splits
-│   ├── 04_regression_experiments.ipynb# Member 3: Continuous OLS, GD, polynomial, Lasso/Ridge
-│   ├── 05_classification_models.ipynb # Member 4: Logistic MLE, first-principles GD, thresholding
-│   ├── 06_pca_experiment.ipynb        # Member 5: PCA dimensionality reduction (Syllabus Topic 11)
-│   └── 07_final_model_comparison.ipynb# Member 5: Unified scorecard, frozen test evaluation
-├── reports/                           # Comprehensive technical handoffs and member reports
+│   ├── 01_dataset_inspection.ipynb    # Task 1: Schema audit, quality & leakage checks
+│   ├── 02_data_cleaning.ipynb         # Task 1: Non-arrival quarantine & target formulation
+│   ├── 03a_eda_time_series.ipynb      # Task 2: Diurnal escalation & time-series analysis
+│   ├── 03b_feature_engineering.ipynb  # Task 2: Cyclical transforms, Bayes priors & splitting
+│   ├── 04_regression_experiments.ipynb# Task 3: OLS, GD from scratch, polynomials, Lasso/Ridge
+│   ├── 05_classification_models.ipynb # Task 4: Logistic MLE, calibration & threshold tuning
+│   ├── 06_pca_experiment.ipynb        # Task 5: PCA eigendecomposition & dimensionality reduction
+│   └── 07_final_model_comparison.ipynb# Task 5: Unified scorecard & frozen test set audit
+├── reports/                           # Member handoffs & academic project report
 │   ├── member1A_data_quality_report.md
 │   ├── member1B_preprocessing_report.md
 │   ├── member2A_eda_report.md
 │   ├── member2B_feature_engineering_report.md
 │   ├── member3_regression_report.md
 │   ├── member4_classification_report.md
-│   └── member5_final_report.md        # Member 5: Final synthesis and system integration report
+│   ├── member5_final_report.md
+│   └── overleaf_project_report.tex    # Complete LaTeX Overleaf report
 ├── results/
-│   └── figures/                       # Publication figures (classification, regression, eda, pca, comparison)
-├── src/                               # Modular, reusable production code
-│   ├── classification.py              # Logistic Regression, GD, pipeline builder, evaluation
-│   ├── config.py                      # Canonical schema mappings and directory configurations
-│   ├── data_loader.py                 # Automated dataset discovery and inspection
-│   ├── features.py                    # Pre-departure feature engineering & Bayes priors
-│   ├── preprocessing.py               # Operational cleaning, filtering, chronological splitting
-│   ├── regression_experiments.py      # OLS, gradient descent, regularization
-│   ├── rescheduling_simulator.py      # Member 5: Offline flight departure rescheduling simulator
-│   └── utils.py                       # Helper utilities
-├── README.md                          # Project documentation
-└── requirements.txt                   # Project dependencies (including Streamlit & Plotly)
+│   └── figures/                       # High-resolution figures across all tasks
+│       ├── classification/            # ROC, PR, threshold tradeoff, calibration curves
+│       ├── comparison/                # Test curves, confusion matrices, paradigm plots
+│       ├── eda/                       # Hourly escalation, airline/airport heatmaps
+│       ├── features/                  # Feature engineering summary diagram
+│       ├── pca/                       # Scree plots, loadings, subspace comparison
+│       └── regression/                # OLS lines, GD loss, bias-variance, Lasso paths
+├── src/                               # Modular, production-grade Python package
+│   ├── classification.py              # Logistic Regression, GD, pipeline builder
+│   ├── config.py                      # Canonical paths and column definitions
+│   ├── data_loader.py                 # Safe dataset ingestion and schema inspection
+│   ├── features.py                    # Pre-departure feature generation & OOF priors
+│   ├── preprocessing.py               # Filtering, quarantine & chronological splitting
+│   ├── regression_experiments.py      # OLS, GD optimizers, regularization, diagnostics
+│   ├── rescheduling_simulator.py      # Offline departure slot reassignment engine
+│   └── utils.py                       # Logging and general helpers
+├── requirements.txt                   # Dependency specifications
+└── README.md                          # Project documentation
 ```
 
 ---
 
-## 🚀 Getting Started & Launching the Application
+## ⚡ Quickstart & How to Run
 
-### 1. Environment Setup
-Create and activate a virtual environment:
+### 1. Setup Environment
+Clone the repository and install dependencies in a virtual environment:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+git clone https://github.com/TechySuryansh/Flight_Delay_Prediction.git
+cd Flight_Delay_Prediction
+
+# Create and activate Python virtual environment
+python3 -m venv venv
+source venv/bin/activate       # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Launch Streamlit Web Application (Member 5 Integration)
-Launch the interactive web application frontend:
-```bash
-streamlit run app/app.py
-```
-The interface provides five core modules:
-1. **🏠 Home / Overview:** Project objectives, DOT BTS definition, 8-stage ML lifecycle, and disclaimers.
-2. **🛫 Predict Flight Delay:** Input predeparture attributes to receive real-time probability estimates, 3-tier risk gauges (Low/Moderate/High), and operational threshold alerts ($\tau^* = 0.33$).
-3. **📊 Delay Analytics:** Interactive Plotly charts of diurnal hourly escalation, carrier rates, and airport hub delays.
-4. **🔄 Rescheduling Simulator:** Explore hypothetical departure shifts (±120 min) and rank options by estimated delay probability.
-5. **🏆 Model Performance:** Consolidated scorecards, test confusion matrices, ROC/PR curves, and calibration reliability diagrams.
-
-### 3. Run Automated Rescheduling Simulator in Python
-Run the command-line self-test of the offline simulator:
+### 2. Run Offline Rescheduling Simulator
+Test the automated slot evaluation and delay delta calculations from the terminal:
 ```bash
 python -m src.rescheduling_simulator
 ```
 
-### 4. Launch Jupyter Notebooks
-Start Jupyter to inspect the step-by-step educational notebooks:
+### 3. Explore Interactive Notebooks
+Launch Jupyter to review step-by-step mathematical workflows and experiments:
 ```bash
 jupyter lab
-# Or run individual notebooks:
-# notebooks/06_pca_experiment.ipynb
-# notebooks/07_final_model_comparison.ipynb
 ```
-
----
-
-## 📌 Phase 1 Academic Roadmap & Status
-- [x] **Task 1A (Member 1A):** Dataset inspection, data quality audit, and ML lifecycle definition (`reports/member1A_data_quality_report.md`).
-- [x] **Task 1B (Member 1B):** Operational cleaning, cancellation/diversion filtering, binary target creation, and dataset export (`reports/member1B_preprocessing_report.md`).
-- [x] **Task 2A (Member 2A):** Exploratory data analysis, diurnal delay escalation, and descriptive time-series analysis (`reports/member2A_eda_report.md`).
-- [x] **Task 2B (Member 2B):** Pre-departure feature engineering, empirical Bayes priors, and chronological partitioning (`reports/member2B_feature_engineering_report.md`).
-- [x] **Task 3 (Member 3):** Continuous delay regression, OLS, GD, polynomial expansions, Gauss-Markov diagnostics, Ridge/Lasso regularization (`reports/member3_regression_report.md`).
-- [x] **Task 4 (Member 4):** Binary classification, Logistic Regression via MLE, first-principles BCE GD, asymmetric cost threshold tuning ($\tau^*=0.33$), probability calibration, and pipeline artifact export (`reports/member4_classification_report.md`).
-- [x] **Task 5 (Member 5):** PCA experiment (Syllabus Topic 11), unified test set evaluation, offline rescheduling simulation, Streamlit web frontend, and final Phase 1 synthesis (`reports/member5_final_report.md`).
-
----
-
-## 👥 Team & Contributors
-
-| Member | Role | Key Contributions |
-| :--- | :--- | :--- |
-| **Sarvjeet Yadav** | Member 1A | Dataset discovery, schema validation, data quality audit, anti-leakage audit, initial pipeline handoff |
-| **Ajeesh** | Member 1B | Operational data cleaning, cancellation filtering, binary target formulation |
-| **Akshat Chauhan** | Member 2A | Exploratory data analysis, diurnal delay escalation, descriptive time-series |
-| **Pranjal Modi** | Member 2B | Pre-departure feature engineering, empirical Bayes priors, chronological splits |
-| **TechySuryansh** | Member 3 / 4 / 5 | Regression experiments, classification pipelines, offline simulator, and Streamlit app integration |
